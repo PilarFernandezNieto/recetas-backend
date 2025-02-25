@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\IngredienteCollection;
 use App\Models\Ingrediente;
 use Illuminate\Http\Request;
+use App\Http\Requests\IngredienteRequest;
+use App\Http\Resources\IngredienteCollection;
 
 class IngredienteController extends Controller
 {
@@ -13,16 +14,31 @@ class IngredienteController extends Controller
      */
     public function index()
     {
-        return new IngredienteCollection(Ingrediente::orderBy('nombre', 'DESC')->get());
+        return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->get());
         //return new IngredienteCollection(Ingrediente::orderBy('id', 'DESC')->paginate(3));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(IngredienteRequest $request)
     {
-        //
+        $datos = $request->validated();
+
+        $imagen = $request->imagen->store('img', "public");
+        $datos['imagen'] = asset('storage/' . $imagen);
+
+        $ingrediente = Ingrediente::create([
+            'nombre' => $datos['nombre'],
+            'imagen' => $datos['imagen'],
+            'descripcion' => $datos['descripcion'],
+        ]);
+
+        return [
+            "type" => "success",
+            "ingrediente" => $ingrediente,
+            "message" => "Ingrediente creado correctamente"
+        ];
     }
 
     /**

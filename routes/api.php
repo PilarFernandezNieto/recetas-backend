@@ -8,7 +8,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/ingredientes', IngredienteController::class);
 });
 
