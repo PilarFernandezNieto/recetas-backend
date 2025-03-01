@@ -6,6 +6,8 @@ use App\Models\Ingrediente;
 use Illuminate\Http\Request;
 use App\Http\Requests\IngredienteRequest;
 use App\Http\Resources\IngredienteCollection;
+use Illuminate\Support\Facades\Storage;
+
 
 class IngredienteController extends Controller
 {
@@ -26,7 +28,8 @@ class IngredienteController extends Controller
         $datos = $request->validated();
 
         $imagen = $request->imagen->store('img', "public");
-        $datos['imagen'] = asset('storage/' . $imagen);
+        //$datos['imagen'] = asset('storage/' . $imagen);
+        $datos['imagen'] = Storage::url($imagen);
 
         $ingrediente = Ingrediente::create([
             'nombre' => $datos['nombre'],
