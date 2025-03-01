@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ingrediente;
+use App\Traits\ImageHandler;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\IngredienteRequest;
 use App\Http\Resources\IngredienteCollection;
-use Illuminate\Support\Facades\Storage;
 
 
 class IngredienteController extends Controller
 {
+    use ImageHandler;
     /**
      * Display a listing of the resource.
      */
@@ -60,6 +62,7 @@ class IngredienteController extends Controller
         $datos = $request->validated();
 
         if ($request->hasFile('imagen')) {
+            $this->borraImagen($ingrediente->imagen);
             $imagen = $request->imagen->store('img', "public");
             $datos['imagen'] = Storage::url($imagen);
         } else {

@@ -8,13 +8,14 @@ trait ImageHandler
 {
     private function borraImagen($imagen)
     {
-        $relativePath = str_replace(asset('storage') . '/', '', $imagen);
-
         if (!$imagen) {
             return;
         }
+        $relativePath = str_replace('storage/', '', $imagen);
+
         if (Storage::disk('public')->exists($relativePath)) {
-            Storage::disk('public')->delete($relativePath);
+           Storage::disk('public')->delete($relativePath);
+          //  dd("existe " . $relativePath);
         }
     }
 }
