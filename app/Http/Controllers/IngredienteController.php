@@ -49,15 +49,34 @@ class IngredienteController extends Controller
      */
     public function show(Ingrediente $ingrediente)
     {
-        //
+        return $ingrediente;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Ingrediente $ingrediente)
+    public function update(IngredienteRequest $request, Ingrediente $ingrediente)
     {
-        //
+        $datos = $request->validated();
+
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->imagen->store('img', "public");
+            $datos['imagen'] = Storage::url($imagen);
+        } else {
+            $datos['imagen'] = $ingrediente->imagen;
+        }
+
+        $ingrediente->update([
+            'nombre' => $datos['nombre'],
+            'imagen' => $datos['imagen'],
+            'descripcion' => $datos['descripcion']
+        ]);
+
+        return [
+            "type" => "success",
+            "ingrediente" => $ingrediente,
+            "message" => "Ingrediente actualizado correctamente"
+        ];
     }
 
     /**
