@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class IngredienteRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class IngredienteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => ['required', 'string'],
+            'nombre' => ['required', 'string', Rule::unique('ingredientes')->ignore($this->ingrediente)],
             'imagen' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:1024'],
             'descripcion' => 'required|string',
         ];
