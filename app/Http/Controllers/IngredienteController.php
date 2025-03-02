@@ -30,7 +30,6 @@ class IngredienteController extends Controller
         $datos = $request->validated();
 
         $imagen = $request->imagen->store('img', "public");
-        //$datos['imagen'] = asset('storage/' . $imagen);
         $datos['imagen'] = Storage::url($imagen);
 
         $ingrediente = Ingrediente::create([
