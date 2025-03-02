@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RecetaRequest;
+use App\Http\Resources\RecetaCollection;
 use App\Models\Receta;
 use App\Models\RecetaIngrediente;
 use Carbon\Carbon;
@@ -15,7 +16,7 @@ class RecetaController extends Controller
      */
     public function index()
     {
-        //
+        return new RecetaCollection(Receta::all());
     }
 
     /**
@@ -67,7 +68,7 @@ class RecetaController extends Controller
      */
     public function show(Receta $receta)
     {
-        //
+        return $receta;
     }
 
     /**
