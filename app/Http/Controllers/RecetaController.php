@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RecetaRequest;
-use App\Http\Resources\RecetaCollection;
-use App\Models\Receta;
-use App\Models\RecetaIngrediente;
 use Carbon\Carbon;
+use App\Models\Receta;
 use Illuminate\Http\Request;
+use App\Models\RecetaIngrediente;
+use App\Http\Requests\RecetaRequest;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\RecetaCollection;
 
 class RecetaController extends Controller
 {
@@ -26,12 +27,17 @@ class RecetaController extends Controller
     {
         $datos = $request->validated();
         $receta = new Receta();
+        $imagen = $request->imagen->store('img', "public");
+        $datos['imagen'] = Storage::url($imagen);
         $receta->nombre = $datos['nombre'];
         $receta->origen = $datos['origen'];
         $receta->tiempo = $datos['tiempo'];
         $receta->comensales = $datos['comensales'];
         $receta->dificultad_id = $datos['dificultad_id'];
         $receta->instrucciones = $datos['instrucciones'];
+        $receta->imagen = $datos['imagen'];
+
+
         $receta->save();
 
         // Obtener el id de la receta
@@ -42,7 +48,7 @@ class RecetaController extends Controller
 
         // Formatear los ingredientes
         $receta_ingrediente = [];
-        foreach($ingredientes as $ingrediente){
+        foreach ($ingredientes as $ingrediente) {
             $receta_ingrediente[] = [
                 'receta_id' => $id,
                 'ingrediente_id' => $ingrediente['ingrediente_id'],
@@ -52,14 +58,13 @@ class RecetaController extends Controller
                 'updated_at' => Carbon::now()
             ];
         }
-
         // Almacena los ingredientes
         RecetaIngrediente::insert($receta_ingrediente);
 
         return [
-            "message" => "Guardando receta " . $receta->id,
-            "receta" => $receta,
-            "ingredientes" => $datos['ingredientes']
+            "type" => "success",
+            "message" => "Receta guardada correctamente",
+            "receta" => $receta
         ];
     }
 
