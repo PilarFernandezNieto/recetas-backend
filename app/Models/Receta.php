@@ -13,4 +13,8 @@ class Receta extends Model
     {
         return $this->belongsTo(Dificultad::class);
     }
+    public function ingredientes() {
+        return $this->belongsToMany(Ingrediente::class, 'receta_ingredientes')->withPivot('cantidad')->withPivot('unidad');
+
+    }
 }

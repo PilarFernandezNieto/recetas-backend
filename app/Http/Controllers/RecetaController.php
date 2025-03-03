@@ -17,8 +17,9 @@ class RecetaController extends Controller
      */
     public function index()
     {
-        return new RecetaCollection(Receta::all());
+        return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->get());
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -36,7 +37,6 @@ class RecetaController extends Controller
         $receta->dificultad_id = $datos['dificultad_id'];
         $receta->instrucciones = $datos['instrucciones'];
         $receta->imagen = $datos['imagen'];
-
 
         $receta->save();
 
@@ -64,7 +64,6 @@ class RecetaController extends Controller
         return [
             "type" => "success",
             "message" => "Receta guardada correctamente",
-            "receta" => $receta
         ];
     }
 
@@ -73,8 +72,9 @@ class RecetaController extends Controller
      */
     public function show(Receta $receta)
     {
-        return $receta;
+        return $receta->load(['dificultad', 'ingredientes']);
     }
+
 
     /**
      * Update the specified resource in storage.
