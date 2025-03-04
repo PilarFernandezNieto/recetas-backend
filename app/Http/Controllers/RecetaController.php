@@ -133,6 +133,16 @@ class RecetaController extends Controller
      */
     public function destroy(Receta $receta)
     {
-        //
+        RecetaIngrediente::where('receta_id', $receta->id)->delete();
+
+        if($receta->imagen){
+            $this->borraImagen($receta->imagen);
+        }
+
+        $receta->delete();
+        return [
+            "type" => "success",
+            "message" => "Receta eliminada correctamente"
+        ];
     }
 }
