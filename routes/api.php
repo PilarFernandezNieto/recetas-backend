@@ -5,12 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\DificultadController;
 use App\Http\Controllers\IngredienteController;
+use App\Http\Controllers\MainController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::prefix('admin')->middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::apiResource('/ingredientes', IngredienteController::class);
 
@@ -19,3 +20,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/dificultades', DificultadController::class);
 });
 
+
+Route::get('/recetas', [MainController::class, 'index']);
