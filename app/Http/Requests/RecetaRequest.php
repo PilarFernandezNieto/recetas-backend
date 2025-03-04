@@ -32,8 +32,8 @@ class RecetaRequest extends FormRequest
             'dificultad_id' => 'required|integer|exists:dificultades,id',
             'ingredientes' => 'required|array',
             'ingredientes.*.ingrediente_id' => 'required|integer|exists:ingredientes,id',
-            'ingredientes.*.cantidad' => 'required|numeric',
-            'ingredientes.*.unidad' => 'required|string'
+            'ingredientes.*.cantidad' => 'nullable|numeric',
+            'ingredientes.*.unidad' => 'nullable|string'
         ];
     }
     public function messages(): array

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Receta;
+use App\Traits\ImageHandler;
 use Illuminate\Http\Request;
 use App\Models\RecetaIngrediente;
 use App\Http\Requests\RecetaRequest;
@@ -12,6 +13,7 @@ use App\Http\Resources\RecetaCollection;
 
 class RecetaController extends Controller
 {
+    use ImageHandler;
     /**
      * Display a listing of the resource.
      */
@@ -58,7 +60,7 @@ class RecetaController extends Controller
                 'updated_at' => Carbon::now()
             ];
         }
-        // Almacena los ingredientes
+        // Almacena los ingredientes en la tabla pivote
         RecetaIngrediente::insert($receta_ingrediente);
 
         return [
@@ -79,9 +81,49 @@ class RecetaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Receta $receta)
+    public function update(RecetaRequest $request, Receta $receta)
     {
-        //
+        $datos = $request->validated();
+        if ($request->hasFile('imagen')) {
+            $this->borraImagen($receta->imagen);
+            $imagen = $request->imagen->store('img', "public");
+            $datos['imagen'] = Storage::url($imagen);
+        } else {
+            $datos['imagen'] = $receta->imagen;
+        }
+        $receta->update([
+            'nombre' => $datos['nombre'],
+            'origen' => $datos['origen'],
+            'tiempo' => $datos['tiempo'],
+            'comensales' => $datos['comensales'],
+            'dificultad_id' => $datos['dificultad_id'],
+            'instrucciones' => $datos['instrucciones'],
+            'imagen' => $datos['imagen']
+        ]);
+
+          // Actualizar ingredientes
+    if (isset($datos['ingredientes'])) {
+        // Eliminar ingredientes existentes para evitar duplicados
+        RecetaIngrediente::where('receta_id', $receta->id)->delete();
+
+        $receta_ingrediente = [];
+        foreach ($datos['ingredientes'] as $ingrediente) {
+            $receta_ingrediente[] = [
+                'receta_id' => $receta->id,
+                'ingrediente_id' => $ingrediente['ingrediente_id'],
+                'cantidad' => $ingrediente['cantidad'],
+                'unidad' => $ingrediente['unidad'],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ];
+        }
+
+        RecetaIngrediente::insert($receta_ingrediente);
+    }
+        return [
+            "type" => "success",
+            "message" => "Receta actualizada correctamente",
+        ];
     }
 
     /**
