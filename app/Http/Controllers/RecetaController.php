@@ -37,6 +37,7 @@ class RecetaController extends Controller
         $receta->tiempo = $datos['tiempo'];
         $receta->comensales = $datos['comensales'];
         $receta->dificultad_id = $datos['dificultad_id'];
+        $receta->intro = $datos['intro'];
         $receta->instrucciones = $datos['instrucciones'];
         $receta->imagen = $datos['imagen'];
 
@@ -97,6 +98,7 @@ class RecetaController extends Controller
             'tiempo' => $datos['tiempo'],
             'comensales' => $datos['comensales'],
             'dificultad_id' => $datos['dificultad_id'],
+            'intro' => $datos['intro'],
             'instrucciones' => $datos['instrucciones'],
             'imagen' => $datos['imagen']
         ]);

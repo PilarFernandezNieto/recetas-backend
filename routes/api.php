@@ -22,3 +22,4 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'verified'])->group(function
 
 
 Route::get('/recetas', [MainController::class, 'index']);
+Route::get('/recetas/{receta}', [MainController::class, 'show']);

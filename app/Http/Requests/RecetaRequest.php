@@ -25,6 +25,7 @@ class RecetaRequest extends FormRequest
         return [
             'nombre' => ['required', 'string', Rule::unique('recetas')->ignore($this->receta)],
             'imagen' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:1024'],
+            'intro' => 'nullable|string',
             'instrucciones' => 'required|string',
             'origen' => 'nullable|string',
             'tiempo' => 'nullable|integer',
@@ -49,6 +50,7 @@ class RecetaRequest extends FormRequest
 
             'instrucciones.required' => 'Las instrucciones de la receta son obligatorias.',
             'instrucciones.string' => 'Las instrucciones deben ser un texto válido.',
+            'intro.string' => 'La intro debe ser un texto válido.',
 
             'origen.string' => 'El origen debe ser un texto válido.',
 

@@ -12,4 +12,8 @@ class MainController extends Controller
         return new RecetaCollection(Receta::with('dificultad', 'ingredientes')->limit(3)->get());
 
     }
+
+    public function show(Receta $receta){
+        return $receta->load(['dificultad', 'ingredientes']);
+    }
 }
