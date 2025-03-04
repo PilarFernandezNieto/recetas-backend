@@ -18,7 +18,7 @@ class IngredienteController extends Controller
      */
     public function index()
     {
-        return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->get());
+        return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->paginate(5));
         //return new IngredienteCollection(Ingrediente::orderBy('id', 'DESC')->paginate(3));
     }
 
