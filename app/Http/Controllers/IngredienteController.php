@@ -21,6 +21,10 @@ class IngredienteController extends Controller
         return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->paginate(5));
         //return new IngredienteCollection(Ingrediente::orderBy('id', 'DESC')->paginate(3));
     }
+    public function ingredientesFormulario(){
+        return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->get());
+
+    }
 
     /**
      * Store a newly created resource in storage.
