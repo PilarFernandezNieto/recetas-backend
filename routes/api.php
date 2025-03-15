@@ -15,9 +15,11 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'verified'])->group(function
 
     Route::apiResource('/ingredientes', IngredienteController::class);
 
-    Route::get('/ingredientes-formulario', [IngredienteController::class, 'ingredientesFormulario']);
+    Route::get('/ingredientes-todos', [IngredienteController::class, 'ingredientesTodos']);
 
     Route::apiResource('/recetas', RecetaController::class);
+
+    Route::get('/recetas-todas', [RecetaController::class, 'allRecetas'] );
 
     Route::apiResource('/dificultades', DificultadController::class);
 });

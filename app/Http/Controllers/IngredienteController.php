@@ -23,7 +23,7 @@ class IngredienteController extends Controller
     }
 
     // Necesitamos los ingredientes sin paginar en los formularios de recetas
-    public function ingredientesFormulario(){
+    public function ingredientesTodos(){
         return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->get());
     }
 

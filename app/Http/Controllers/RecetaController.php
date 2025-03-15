@@ -17,11 +17,24 @@ class RecetaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->get());
+        $buscar = $request->query('buscar', '');
+        $query = Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC');
+
+        if($buscar){
+            $query->where('nombre', 'like', '%'.$buscar.'%');
+        }
+
+        $recetas = $query->paginate(3);
+
+        return new RecetaCollection($recetas);
+        //return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC')->paginate(3));
     }
 
+    public function allRecetas(){
+        return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC')->get());
+    }
 
     /**
      * Store a newly created resource in storage.
