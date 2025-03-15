@@ -21,9 +21,10 @@ class IngredienteController extends Controller
         return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->paginate(5));
         //return new IngredienteCollection(Ingrediente::orderBy('id', 'DESC')->paginate(3));
     }
+
+    // Necesitamos los ingredientes sin paginar en los formularios de recetas
     public function ingredientesFormulario(){
         return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->get());
-
     }
 
     /**

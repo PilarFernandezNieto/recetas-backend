@@ -30,8 +30,10 @@ class RecetaController extends Controller
     {
         $datos = $request->validated();
         $receta = new Receta();
+
         $imagen = $request->imagen->store('img', "public");
         $datos['imagen'] = Storage::url($imagen);
+
         $receta->nombre = $datos['nombre'];
         $receta->origen = $datos['origen'];
         $receta->tiempo = $datos['tiempo'];
@@ -75,6 +77,7 @@ class RecetaController extends Controller
      */
     public function show(Receta $receta)
     {
+        // Carga un ingrediente con los datos de las tablas relacionadas (dificultades - ingredientes)
         return $receta->load(['dificultad', 'ingredientes']);
     }
 
@@ -103,25 +106,25 @@ class RecetaController extends Controller
             'imagen' => $datos['imagen']
         ]);
 
-          // Actualizar ingredientes
-    if (isset($datos['ingredientes'])) {
-        // Eliminar ingredientes existentes para evitar duplicados
-        RecetaIngrediente::where('receta_id', $receta->id)->delete();
+        // Actualizar ingredientes
+        if (isset($datos['ingredientes'])) {
+            // Eliminar ingredientes existentes para evitar duplicados
+            RecetaIngrediente::where('receta_id', $receta->id)->delete();
 
-        $receta_ingrediente = [];
-        foreach ($datos['ingredientes'] as $ingrediente) {
-            $receta_ingrediente[] = [
-                'receta_id' => $receta->id,
-                'ingrediente_id' => $ingrediente['ingrediente_id'],
-                'cantidad' => $ingrediente['cantidad'],
-                'unidad' => $ingrediente['unidad'],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ];
+            $receta_ingrediente = [];
+            foreach ($datos['ingredientes'] as $ingrediente) {
+                $receta_ingrediente[] = [
+                    'receta_id' => $receta->id,
+                    'ingrediente_id' => $ingrediente['ingrediente_id'],
+                    'cantidad' => $ingrediente['cantidad'],
+                    'unidad' => $ingrediente['unidad'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ];
+            }
+
+            RecetaIngrediente::insert($receta_ingrediente);
         }
-
-        RecetaIngrediente::insert($receta_ingrediente);
-    }
         return [
             "type" => "success",
             "message" => "Receta actualizada correctamente",
@@ -135,7 +138,7 @@ class RecetaController extends Controller
     {
         RecetaIngrediente::where('receta_id', $receta->id)->delete();
 
-        if($receta->imagen){
+        if ($receta->imagen) {
             $this->borraImagen($receta->imagen);
         }
 
