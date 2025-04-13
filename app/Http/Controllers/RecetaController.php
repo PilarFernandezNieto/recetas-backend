@@ -19,11 +19,12 @@ class RecetaController extends Controller
      */
     public function index(Request $request)
     {
+        // Filtra la consulta a BBDD por el término a buscar si existe
         $buscar = $request->query('buscar', '');
         $query = Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC');
 
-        if($buscar){
-            $query->where('nombre', 'like', '%'.$buscar.'%');
+        if ($buscar) {
+            $query->where('nombre', 'like', '%' . $buscar . '%');
         }
 
         $recetas = $query->paginate(3);
@@ -32,7 +33,8 @@ class RecetaController extends Controller
         //return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC')->paginate(3));
     }
 
-    public function allRecetas(){
+    public function allRecetas()
+    {
         return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC')->get());
     }
 
