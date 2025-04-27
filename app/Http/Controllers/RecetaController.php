@@ -21,7 +21,8 @@ class RecetaController extends Controller
     {
         // Filtra la consulta a BBDD por el término a buscar si existe
         $buscar = $request->query('buscar', '');
-        $query = Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC');
+        $query = Receta::with(['dificultad', 'categoria', 'ingredientes']) // Relaciona las entidades
+        ->orderBy('nombre', 'ASC'); // Ordena los resultados
 
         if ($buscar) {
             $query->where('nombre', 'like', '%' . $buscar . '%');
@@ -35,7 +36,7 @@ class RecetaController extends Controller
 
     public function allRecetas()
     {
-        return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC')->get());
+        return new RecetaCollection(Receta::with('dificultad')->with('categoria')->with('ingredientes')->orderBy('nombre', 'ASC')->get());
     }
 
     /**
@@ -54,6 +55,7 @@ class RecetaController extends Controller
         $receta->tiempo = $datos['tiempo'];
         $receta->comensales = $datos['comensales'];
         $receta->dificultad_id = $datos['dificultad_id'];
+        $receta->categoria_id = $datos['categoria_id'];
         $receta->intro = $datos['intro'];
         $receta->instrucciones = $datos['instrucciones'];
         $receta->imagen = $datos['imagen'];
@@ -93,7 +95,7 @@ class RecetaController extends Controller
     public function show(Receta $receta)
     {
         // Carga un ingrediente con los datos de las tablas relacionadas (dificultades - ingredientes)
-        return $receta->load(['dificultad', 'ingredientes']);
+        return $receta->load(['dificultad', 'ingredientes', 'categoria']);
     }
 
 
@@ -102,7 +104,10 @@ class RecetaController extends Controller
      */
     public function update(RecetaRequest $request, Receta $receta)
     {
+
+
         $datos = $request->validated();
+
         if ($request->hasFile('imagen')) {
             $this->borraImagen($receta->imagen);
             $imagen = $request->imagen->store('img', "public");
@@ -116,6 +121,7 @@ class RecetaController extends Controller
             'tiempo' => $datos['tiempo'],
             'comensales' => $datos['comensales'],
             'dificultad_id' => $datos['dificultad_id'],
+            'categoria_id' => $datos['categoria_id'],
             'intro' => $datos['intro'],
             'instrucciones' => $datos['instrucciones'],
             'imagen' => $datos['imagen']

@@ -31,6 +31,7 @@ class RecetaRequest extends FormRequest
             'tiempo' => 'nullable|integer',
             'comensales' => 'nullable|integer',
             'dificultad_id' => 'required|integer|exists:dificultades,id',
+            'categoria_id' => 'required|integer|exists:categorias,id',
             'ingredientes' => 'required|array',
             'ingredientes.*.ingrediente_id' => 'required|integer|exists:ingredientes,id',
             'ingredientes.*.cantidad' => 'nullable|string',
@@ -61,6 +62,10 @@ class RecetaRequest extends FormRequest
             'dificultad_id.required' => 'Debes seleccionar una dificultad.',
             'dificultad_id.integer' => 'El valor de dificultad debe ser un número entero.',
             'dificultad_id.exists' => 'La dificultad seleccionada no es válida.',
+
+            'categoria_id.required' => 'Debes seleccionar una categoría.',
+            'categoria_id.integer' => 'El valor de categoría debe ser un número entero.',
+            'categoria_id.exists' => 'La categoría seleccionada no es válida.',
 
             'ingredientes.required' => 'Debes agregar al menos un ingrediente.',
             'ingredientes.array' => 'Los ingredientes deben enviarse en formato de lista.',
