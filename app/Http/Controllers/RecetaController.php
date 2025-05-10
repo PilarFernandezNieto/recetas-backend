@@ -8,6 +8,7 @@ use App\Traits\ImageHandler;
 use Illuminate\Http\Request;
 use App\Models\RecetaIngrediente;
 use App\Http\Requests\RecetaRequest;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\RecetaCollection;
 
@@ -17,22 +18,33 @@ class RecetaController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
-        // Filtra la consulta a BBDD por el término a buscar si existe
+        // Obtener el término de búsqueda desde la URL (?buscar=...)
         $buscar = $request->query('buscar', '');
-        $query = Receta::with(['dificultad', 'categoria', 'ingredientes']) // Relaciona las entidades
-        ->orderBy('nombre', 'ASC'); // Ordena los resultados
 
+        // Construir la consulta base con relaciones y orden
+        $query = Receta::with(['dificultad', 'categoria', 'ingredientes'])
+            ->orderBy('recetas.nombre', 'ASC')
+            ->join('categorias', 'categorias.id', '=', 'recetas.categoria_id') // Hacemos join para poder buscar por nombre de categoría
+            ->select('recetas.*'); // Aseguramos que solo seleccionamos columnas de recetas (evita conflictos de columnas duplicadas)
+
+        // Si hay término de búsqueda, aplicar filtro por nombre o categoría
         if ($buscar) {
-            $query->where('nombre', 'like', '%' . $buscar . '%');
+            $query->where(function (Builder $q) use ($buscar) {
+                $q->where('recetas.nombre', 'like', '%' . $buscar . '%')
+                  ->orWhere('categorias.nombre', 'like', '%' . $buscar . '%');
+            });
         }
 
+        // Paginamos resultados
         $recetas = $query->paginate(3);
 
+        // Devolvemos la colección con la paginación
         return new RecetaCollection($recetas);
-        //return new RecetaCollection(Receta::with('dificultad')->with('ingredientes')->orderBy('nombre', 'ASC')->paginate(3));
     }
+
 
     public function allRecetas()
     {
