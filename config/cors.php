@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'https://recetas-pilar.vercel.app')],
+    'allowed_origins' => [env('FRONTEND_URL', 'https://recetas-frontend-one.vercel.app')],
 
     'allowed_origins_patterns' => [],
 
