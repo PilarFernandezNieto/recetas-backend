@@ -16,10 +16,13 @@ class EnsureEmailIsVerified
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!$request->user()) {
+            return response()->json(['error' => 'No user detected', 'cookies' => request()->cookies->all()], 403);
+        }
         if (! $request->user() ||
             ($request->user() instanceof MustVerifyEmail &&
             ! $request->user()->hasVerifiedEmail())) {
-            return response()->json(['message' => 'Your email address is not verified.'], 409);
+            return response()->json(['message' => 'Tu dirección de correo no ha sido verificada.'], 409);
         }
 
         return $next($request);
