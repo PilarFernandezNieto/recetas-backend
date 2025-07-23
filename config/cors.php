@@ -29,8 +29,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'https://recetas-frontend-one.vercel.app')],
-    //'allowed_origins' => ['http://localhost:3000'],
+    //'allowed_origins' => [env('FRONTEND_URL', 'https://recetas-frontend-one.vercel.app')],
+    'allowed_origins' => ['http://localhost:3000'],
 
 
     'allowed_origins_patterns' => [],
