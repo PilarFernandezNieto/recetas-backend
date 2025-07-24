@@ -13,7 +13,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('admin')->middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::prefix('admin')->middleware(['auth:sanctum', 'verified', 'is_admin'])->group(function () {
 
     Route::apiResource('/ingredientes', IngredienteController::class);
     Route::apiResource('/categorias', CategoriaController::class);
