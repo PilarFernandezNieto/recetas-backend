@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\UsuarioRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Resources\UserResource;
-use App\Http\Resources\UserCollection;
+use App\Http\Resources\UsuarioCollection;
+use App\Http\Resources\UsuarioResource;
 
-class UserController extends Controller
+class UsuarioController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return new UserCollection(User::all());
+        return new UsuarioCollection(User::all());
     }
 
     /**
@@ -30,9 +29,9 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $usuario)
     {
-        return new UserResource($user);
+        return new UsuarioResource($usuario);
     }
 
 
@@ -40,7 +39,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserRequest $request, User  $user)
+    public function update(UsuarioRequest $request, User  $usuario)
     {
         $datos = $request->validated();
 
@@ -50,15 +49,15 @@ class UserController extends Controller
             unset($datos['password']); // If password is not provided, do not update it
         }
 
-        $user->update([
+        $usuario->update([
             'name' => $datos['name'],
             'email' => $datos['email'],
-            'password' => $datos['password'] ?? $user->password, // Use existing password if not provided
+            'password' => $datos['password'] ?? $usuario->password, // Use existing password if not provided
             'is_admin' => $datos['is_admin'] ?? false,
         ]);
         return [
             "type" => "success",
-            "user" => $user,
+            "user" => $usuario,
             "message" => "Usuario actualizado correctamente"
         ];
     }
@@ -66,9 +65,9 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $usuario)
     {
-        $user->delete();
+        $usuario->delete();
 
         return [
             "type" => "success",

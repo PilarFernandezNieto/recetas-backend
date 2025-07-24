@@ -7,7 +7,7 @@ use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DificultadController;
 use App\Http\Controllers\IngredienteController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsuarioController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -25,7 +25,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'verified'])->group(function
     Route::get('/recetas-todas', [RecetaController::class, 'allRecetas'] );
 
     Route::apiResource('/dificultades', DificultadController::class);
-    Route::apiResource('/users', UserController::class);
+    Route::apiResource('/usuarios', UsuarioController::class);
 });
 
 
