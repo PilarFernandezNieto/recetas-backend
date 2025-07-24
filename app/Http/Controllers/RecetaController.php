@@ -38,11 +38,13 @@ class RecetaController extends Controller
             });
         }
 
-        // Paginamos resultados
-        $recetas = $query->paginate(3);
+
+
+
+
 
         // Devolvemos la colección con la paginación
-        return new RecetaCollection($recetas);
+  return new RecetaCollection($query->paginate(3));
     }
 
 
