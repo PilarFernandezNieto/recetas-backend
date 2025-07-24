@@ -44,10 +44,16 @@ class UserController extends Controller
     {
         $datos = $request->validated();
 
+        if($request->has('password')) {
+            $datos['password'] = bcrypt($datos['password']);
+        } else {
+            unset($datos['password']); // If password is not provided, do not update it
+        }
+
         $user->update([
             'name' => $datos['name'],
             'email' => $datos['email'],
-            'password' => bcrypt($datos['password']),
+            'password' => $datos['password'] ?? $user->password, // Use existing password if not provided
             'is_admin' => $datos['is_admin'] ?? false,
         ]);
         return [
