@@ -23,8 +23,8 @@ class MainController extends Controller
                   ->orWhere('categorias.nombre', 'like', '%' . $buscar . '%');
             });
         }
-        $recetas = $query->get();
-        return new RecetaCollection($recetas);
+        // Devolvemos la colección con la paginación
+        return new RecetaCollection($query->paginate(4));
 
     }
 
