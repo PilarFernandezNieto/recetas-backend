@@ -23,7 +23,8 @@ class IngredienteController extends Controller
     }
 
     // Necesitamos los ingredientes sin paginar en los formularios de recetas
-    public function ingredientesTodos(){
+    public function ingredientesTodos()
+    {
         return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->get());
     }
 
@@ -91,12 +92,23 @@ class IngredienteController extends Controller
      */
     public function destroy(Ingrediente $ingrediente)
     {
-        $this->borraImagen($ingrediente->imagen);
+        try {
+            $ingrediente->delete();
+            $this->borraImagen($ingrediente->imagen);
+            return response()->json([
+                "type" => "success",
+                "message" => "Ingrediente eliminado correctamente"
+            ]);
+        } catch (\Exception $e) {
+            if ($e->getCode() == 23000) {
 
-        $ingrediente->delete();
-        return [
-            "type" => "success",
-            "message" => "Ingrediente eliminado correctamente"
-        ];
+                // Error de integridad referencial, el ingrediente está siendo utilizado en una receta
+                return response()->json([
+                    "type" => "error",
+                    "code" => $e->getCode(),
+                    "message" => "No se puede eliminar el ingrediente porque está siendo utilizado en una receta"
+                ], 409);
+            }
+        }
     }
 }
