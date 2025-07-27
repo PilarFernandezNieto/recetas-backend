@@ -54,8 +54,13 @@ class RecetaController extends Controller
         $datos = $request->validated();
         $receta = new Receta();
 
-        $imagen = $request->imagen->store('img', "public");
-        $datos['imagen'] = Storage::url($imagen);
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->imagen->store('img', "public");
+            $datos['imagen'] = Storage::url($imagen);
+        } else {
+            $datos['imagen'] = null;
+        }
+
 
         $receta->nombre = $datos['nombre'];
         $receta->origen = $datos['origen'];
@@ -67,7 +72,9 @@ class RecetaController extends Controller
         $receta->instrucciones = $datos['instrucciones'];
         $receta->imagen = $datos['imagen'];
 
+
         $receta->save();
+
 
         // Obtener el id de la receta
         $id = $receta->id;
@@ -88,7 +95,7 @@ class RecetaController extends Controller
             ];
         }
         // Almacena los ingredientes en la tabla pivote
-        RecetaIngrediente::insert($receta_ingrediente);
+        $receta = RecetaIngrediente::insert($receta_ingrediente);
 
         return [
             "type" => "success",
