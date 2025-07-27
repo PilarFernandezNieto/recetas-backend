@@ -27,24 +27,17 @@ class RecetaController extends Controller
         // Construir la consulta base con relaciones y orden
         $query = Receta::with(['dificultad', 'categoria', 'ingredientes'])
             ->orderBy('recetas.nombre', 'ASC')
-            ->join('categorias', 'categorias.id', '=', 'recetas.categoria_id') // Hacemos join para poder buscar por nombre de categoría
-            ->select('recetas.*'); // Aseguramos que solo seleccionamos columnas de recetas (evita conflictos de columnas duplicadas)
-
+            ->join('categorias', 'categorias.id', '=', 'recetas.categoria_id') // JOIN categoras ON categorias.id = recetas.categoria_id (para buscar por nombre de categoría)
+            ->select('recetas.*');
         // Si hay término de búsqueda, aplicar filtro por nombre o categoría
         if ($buscar) {
             $query->where(function (Builder $q) use ($buscar) {
                 $q->where('recetas.nombre', 'like', '%' . $buscar . '%')
-                  ->orWhere('categorias.nombre', 'like', '%' . $buscar . '%');
+                    ->orWhere('categorias.nombre', 'like', '%' . $buscar . '%');
             });
         }
-
-
-
-
-
-
         // Devolvemos la colección con la paginación
-  return new RecetaCollection($query->paginate(3));
+        return new RecetaCollection($query->paginate(3));
     }
 
 
