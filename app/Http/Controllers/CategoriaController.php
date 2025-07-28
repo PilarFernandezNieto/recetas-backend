@@ -67,13 +67,23 @@ class CategoriaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Categoria $categoria )
+    public function destroy(Categoria $categoria)
     {
-        $categoria->delete();
+        try {
+            $categoria->delete();
+            return response()->json([
+                "type" => "success",
+                "message" => "Categoría eliminada correctamente"
+            ]);
+        } catch (\Exception $e) {
 
-        return [
-            "type" => "success",
-            "message" => "Categoría eliminada correctamente"
-        ];
+            if ($e->getCode() == 23000) { // Integrity constraint violation
+                return response()->json([
+                    "type" => "error",
+                    "code" => $e->getCode(),
+                    "message" => "No se puede eliminar la categoría porque está siendo utilizada por otros recursos."
+                ], 409);
+            }
+        }
     }
 }
