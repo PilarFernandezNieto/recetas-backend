@@ -25,7 +25,7 @@ class IngredienteRequest extends FormRequest
         return [
             'nombre' => ['required', 'string', Rule::unique('ingredientes')->ignore($this->ingrediente)],
             'imagen' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:1024'],
-            'descripcion' => 'required|string',
+            'descripcion' => 'nullable|string',
         ];
     }
 
@@ -36,7 +36,7 @@ class IngredienteRequest extends FormRequest
             'imagen.image' => 'El archivo debe ser una imagen',
             'imagen.mimes' => 'La imagen debe ser de tipo jpeg, png o jpg',
             'imagen.max' => 'La imagen no debe pesar más de 1MB',
-            'descripcion.required' => 'La descripción es obligatoria',
+             'descripcion.string' => 'La descripción debe ser un texto válido',
         ];
     }
 }
