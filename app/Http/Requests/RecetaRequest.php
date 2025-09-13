@@ -28,7 +28,7 @@ class RecetaRequest extends FormRequest
             'intro' => 'nullable|string',
             'instrucciones' => 'required|string',
             'origen' => 'nullable|string',
-            'tiempo' => 'nullable|integer',
+            'tiempo' => 'nullable|string',
             'comensales' => 'nullable|integer',
             'dificultad_id' => 'required|integer|exists:dificultades,id',
             'categoria_id' => 'required|integer|exists:categorias,id',
