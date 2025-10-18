@@ -18,7 +18,7 @@ class IngredienteController extends Controller
      */
     public function index()
     {
-        return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->paginate(12)); // paginación - 12 elementos
+        return new IngredienteCollection(Ingrediente::orderBy('nombre', 'ASC')->paginate(18)); // paginación - 12 elementos
         //return new IngredienteCollection(Ingrediente::orderBy('id', 'DESC')->paginate(3));
     }
 
