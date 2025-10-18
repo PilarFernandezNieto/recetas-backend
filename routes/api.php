@@ -28,6 +28,6 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'verified', 'is_admin'])->gr
     Route::apiResource('/usuarios', UsuarioController::class);
 });
 
-
+// Rutas públicas para el MainController
 Route::get('/recetas', [MainController::class, 'index']);
 Route::get('/recetas/{receta}', [MainController::class, 'show']);

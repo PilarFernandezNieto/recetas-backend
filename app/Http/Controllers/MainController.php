@@ -10,20 +10,32 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MainController extends Controller
 {
-    public function index(Request $request){
+     public function index(Request $request)
+    {
         $buscar = $request->query('buscar', '');
 
         $query = Receta::with(['dificultad', 'categoria', 'ingredientes'])
-        ->orderBy('recetas.nombre', 'ASC')
-        ->join('categorias', 'categorias.id', '=', 'recetas.categoria_id') // Hacemos join para poder buscar por nombre de categoría
-        ->select('recetas.*');
+            ->orderBy('recetas.nombre', 'ASC')
+            ->join('categorias', 'categorias.id', '=', 'recetas.categoria_id')
+            ->select('recetas.*');
+
+        // 🔹 Si hay término de búsqueda, aplicamos filtro
         if ($buscar) {
             $query->where(function (Builder $q) use ($buscar) {
                 $q->where('recetas.nombre', 'like', '%' . $buscar . '%')
                   ->orWhere('categorias.nombre', 'like', '%' . $buscar . '%');
             });
         }
-        // Devolvemos la colección con la paginación
+
+        // 🔹 Obtenemos SQL real interpolando los bindings
+        // $sql = vsprintf(
+        //     str_replace('?', "'%s'", $query->toSql()),
+        //     array_map('addslashes', $query->getBindings())
+        // );
+        // 🔹 MOSTRAR la SQL en Postman
+        //return response()->json(['sql' => $sql]);
+
+        // 🔹 Devolvemos la colección con paginación
         return new RecetaCollection($query->paginate(8));
 
     }
