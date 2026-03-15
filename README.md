@@ -1,66 +1,134 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Logo de Laravel"></a></p>
+# 📖 Libro de Recetas — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Estado de la compilación"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Descargas totales"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Versión estable más reciente"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="Licencia"></a>
-</p>
+API REST desarrollada con **Laravel 11** que actúa como backend para la aplicación web _Libro de Recetas_. Gestiona recetas, ingredientes, categorías, dificultades y usuarios, con autenticación mediante **Laravel Sanctum**.
 
-## Acerca de Laravel
+---
 
-Laravel es un framework para aplicaciones web con una sintaxis expresiva y elegante. Creemos que el desarrollo debe ser una experiencia agradable y creativa para ser realmente gratificante. Laravel elimina las dificultades del desarrollo al simplificar tareas comunes en muchos proyectos web, tales como:
+## 🗂️ Descripción general
 
-- [Motor de enrutamiento simple y rápido](https://laravel.com/docs/routing).
-- [Potente contenedor de inyección de dependencias](https://laravel.com/docs/container).
-- Múltiples sistemas de almacenamiento para [sesiones](https://laravel.com/docs/session) y [caché](https://laravel.com/docs/cache).
-- [ORM de base de datos expresivo e intuitivo](https://laravel.com/docs/eloquent).
-- [Migraciones de esquemas](https://laravel.com/docs/migrations) independientes del tipo de base de datos.
-- [Procesamiento robusto de trabajos en segundo plano](https://laravel.com/docs/queues).
-- [Transmisión de eventos en tiempo real](https://laravel.com/docs/broadcasting).
+Este proyecto expone una API JSON consumida por el frontend Vue 3. Incluye:
 
-Laravel es accesible, potente y proporciona las herramientas necesarias para crear aplicaciones grandes y robustas.
+- **Recetas**: listado público y gestión completa desde el panel de administración.
+- **Ingredientes**: catálogo de ingredientes reutilizables en cada receta.
+- **Categorías y dificultades**: clasificación de las recetas.
+- **Usuarios**: gestión de cuentas y roles.
+- **Autenticación**: registro, login y logout mediante Sanctum (tokens de sesión con cookies).
+- **Panel de administración**: rutas protegidas por los middlewares `auth:sanctum`, `verified` e `is_admin`.
 
-## Aprendiendo Laravel
+### Rutas principales de la API
 
-Laravel tiene la documentación más extensa y completa y la mayor biblioteca de tutoriales en vídeo de todos los frameworks modernos de aplicaciones web, lo que facilita empezar con el framework.
+| Método | Ruta                      | Acceso  | Descripción                 |
+| ------ | ------------------------- | ------- | --------------------------- |
+| GET    | `/api/recetas`            | Público | Listado paginado de recetas |
+| GET    | `/api/recetas/{id}`       | Público | Detalle de una receta       |
+| CRUD   | `/api/admin/recetas`      | Admin   | Gestión de recetas          |
+| CRUD   | `/api/admin/ingredientes` | Admin   | Gestión de ingredientes     |
+| CRUD   | `/api/admin/categorias`   | Admin   | Gestión de categorías       |
+| CRUD   | `/api/admin/dificultades` | Admin   | Gestión de dificultades     |
+| CRUD   | `/api/admin/usuarios`     | Admin   | Gestión de usuarios         |
 
-También puedes probar el [Laravel Bootcamp](https://bootcamp.laravel.com), donde se te guiará en la creación de una aplicación moderna con Laravel desde cero.
+---
 
-Si no quieres leer, [Laracasts](https://laracasts.com) puede ayudarte. Laracasts contiene miles de tutoriales en vídeo sobre diversos temas, incluyendo Laravel, PHP moderno, pruebas unitarias y JavaScript. Mejora tus habilidades explorando su completa biblioteca de vídeos.
+## ⚙️ Requisitos previos
 
-## Patrocinadores de Laravel
+- **PHP** >= 8.2
+- **Composer**
+- **Node.js** y **npm** (para Vite y assets)
+- Una base de datos compatible (SQLite por defecto, o MySQL/PostgreSQL)
 
-Queremos extender nuestro agradecimiento a los siguientes patrocinadores por financiar el desarrollo de Laravel. Si estás interesado en convertirte en patrocinador, visita el [programa de socios de Laravel](https://partners.laravel.com).
+---
 
-### Socios Premium
+## 🚀 Instalación y puesta en marcha (desarrollo)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 1. Instalar dependencias
 
-## Contribuciones
+```bash
+composer install
+npm install
+```
 
-Gracias por considerar contribuir al framework Laravel. La guía de contribución se encuentra en la [documentación oficial de Laravel](https://laravel.com/docs/contributions).
+### 2. Configurar el entorno
 
-## Código de conducta
+Copia el archivo de ejemplo y edítalo con tus valores:
 
-Para garantizar que la comunidad de Laravel sea acogedora para todos, revisa y cumple con el [Código de Conducta](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+```
 
-## Vulnerabilidades de seguridad
+Variables clave en `.env`:
 
-Si descubres una vulnerabilidad de seguridad en Laravel, envía un correo electrónico a Taylor Otwell a [taylor@laravel.com](mailto:taylor@laravel.com). Todas las vulnerabilidades de seguridad serán tratadas de manera oportuna.
+```dotenv
+APP_NAME="Libro de Recetas"
+APP_URL=http://localhost:8000
 
-## Licencia
+# Base de datos (SQLite por defecto, sin configuración adicional)
+DB_CONNECTION=sqlite
 
-El framework Laravel es un software de código abierto licenciado bajo la [licencia MIT](https://opensource.org/licenses/MIT).
+# Si usas MySQL, descomenta y rellena:
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=recetas
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# URL del frontend (para CORS y Sanctum)
+FRONTEND_URL=http://localhost:5173
+SANCTUM_STATEFUL_DOMAINS=localhost:5173
+SESSION_DOMAIN=localhost
+```
+
+### 3. Generar la clave de la aplicación
+
+```bash
+php artisan key:generate
+```
+
+### 4. Ejecutar migraciones (y seeders, si los hay)
+
+```bash
+php artisan migrate
+# php artisan db:seed   # opcional, si existen seeders
+```
+
+### 5. Iniciar el servidor de desarrollo
+
+**Opción A — Básica (recomendada para uso habitual):**
+
+```bash
+php artisan serve --host=localhost --port=8000
+```
+
+> La API quedará disponible en **http://localhost:8000**
+
+**Opción B — Avanzada (incluye cola de trabajos y logs en tiempo real):**
+
+```bash
+composer run dev
+```
+
+> Lanza en paralelo: servidor PHP, `queue:listen`, `pail` (logs) y Vite.  
+> Útil si usas trabajos en cola o quieres monitorizar logs desde consola.
+
+---
+
+## 🔗 Frontend relacionado
+
+El frontend (Vue 3 + Vite) se encuentra en la carpeta `recetas-frontend`. Consulta su propio `README.md` para iniciarlo.
+
+---
+
+## 🛠️ Tecnologías utilizadas
+
+| Tecnología      | Versión                    |
+| --------------- | -------------------------- |
+| Laravel         | ^11.31                     |
+| Laravel Sanctum | ^4.0                       |
+| PHP             | ^8.2                       |
+| Laravel Breeze  | ^2.3 (scaffolding de auth) |
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia [MIT](https://opensource.org/licenses/MIT).

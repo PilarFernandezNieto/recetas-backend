@@ -97,8 +97,8 @@ class IngredienteController extends Controller
     public function destroy(Ingrediente $ingrediente)
     {
         try {
-            $ingrediente->delete();
             $this->borraImagen($ingrediente->imagen);
+            $ingrediente->delete();
             return response()->json([
                 "type" => "success",
                 "message" => "Ingrediente eliminado correctamente"

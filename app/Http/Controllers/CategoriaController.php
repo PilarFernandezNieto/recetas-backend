@@ -84,6 +84,7 @@ class CategoriaController extends Controller
                     "message" => "No se puede eliminar la categoría porque está siendo utilizada por otros recursos."
                 ], 409);
             }
+            return response()->json(['type' => 'error', 'message' => 'Error inesperado'], 500);
         }
     }
 }

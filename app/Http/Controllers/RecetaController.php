@@ -95,7 +95,7 @@ class RecetaController extends Controller
             ];
         }
         // Almacena los ingredientes en la tabla pivote
-        $receta = RecetaIngrediente::insert($receta_ingrediente);
+        RecetaIngrediente::insert($receta_ingrediente);
 
         return [
             "type" => "success",
