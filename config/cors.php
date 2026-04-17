@@ -27,15 +27,16 @@ return [
         'email/*'
     ],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
     //'allowed_origins' => [env('FRONTEND_URL', 'https://recetas-frontend-one.vercel.app')],
-    'allowed_origins' => ['http://localhost:3000'],
+    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
 
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['Content-Type', 'X-Requested-With', 'X-XSRF-TOKEN', 'Accept'],
+
 
     'exposed_headers' => [],
 
