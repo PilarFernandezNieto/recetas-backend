@@ -27,15 +27,6 @@ class MainController extends Controller
             });
         }
 
-        // 🔹 Obtenemos SQL real interpolando los bindings
-        // $sql = vsprintf(
-        //     str_replace('?', "'%s'", $query->toSql()),
-        //     array_map('addslashes', $query->getBindings())
-        // );
-        // 🔹 MOSTRAR la SQL en Postman
-        //return response()->json(['sql' => $sql]);
-
-        // 🔹 Devolvemos la colección con paginación
         return new RecetaCollection($query->paginate(8));
 
     }
