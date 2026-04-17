@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dificultad;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\DificultadCollection;
 
 class DificultadController extends Controller
@@ -13,7 +14,8 @@ class DificultadController extends Controller
      */
     public function index()
     {
-        return new DificultadCollection(Dificultad::all());
+        $dificultades = Cache::rememberForever('dificultades', fn() => Dificultad::all());
+        return new DificultadCollection($dificultades);
     }
 
     /**

@@ -40,12 +40,6 @@ class RecetaController extends Controller
         return new RecetaCollection($query->paginate(8));
     }
 
-
-    public function allRecetas()
-    {
-        return new RecetaCollection(Receta::with('dificultad')->with('categoria')->with('ingredientes')->orderBy('nombre', 'ASC')->get());
-    }
-
     /**
      * Store a newly created resource in storage.
      */

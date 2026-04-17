@@ -22,8 +22,6 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'verified', 'is_admin'])->gr
 
     Route::apiResource('/recetas', RecetaController::class);
 
-    Route::get('/recetas-todas', [RecetaController::class, 'allRecetas'] );
-
     Route::apiResource('/dificultades', DificultadController::class);
     Route::apiResource('/usuarios', UsuarioController::class);
 });
