@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Ingrediente;
 use App\Traits\ImageHandler;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\IngredienteRequest;
 use App\Http\Resources\IngredienteCollection;
