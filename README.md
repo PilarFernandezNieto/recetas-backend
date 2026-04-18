@@ -1,134 +1,225 @@
-# 📖 Libro de Recetas — Backend
+# Libro de Recetas — Backend
 
-API REST desarrollada con **Laravel 11** que actúa como backend para la aplicación web _Libro de Recetas_. Gestiona recetas, ingredientes, categorías, dificultades y usuarios, con autenticación mediante **Laravel Sanctum**.
-
----
-
-## 🗂️ Descripción general
-
-Este proyecto expone una API JSON consumida por el frontend Vue 3. Incluye:
-
-- **Recetas**: listado público y gestión completa desde el panel de administración.
-- **Ingredientes**: catálogo de ingredientes reutilizables en cada receta.
-- **Categorías y dificultades**: clasificación de las recetas.
-- **Usuarios**: gestión de cuentas y roles.
-- **Autenticación**: registro, login y logout mediante Sanctum (tokens de sesión con cookies).
-- **Panel de administración**: rutas protegidas por los middlewares `auth:sanctum`, `verified` e `is_admin`.
-
-### Rutas principales de la API
-
-| Método | Ruta                      | Acceso  | Descripción                 |
-| ------ | ------------------------- | ------- | --------------------------- |
-| GET    | `/api/recetas`            | Público | Listado paginado de recetas |
-| GET    | `/api/recetas/{id}`       | Público | Detalle de una receta       |
-| CRUD   | `/api/admin/recetas`      | Admin   | Gestión de recetas          |
-| CRUD   | `/api/admin/ingredientes` | Admin   | Gestión de ingredientes     |
-| CRUD   | `/api/admin/categorias`   | Admin   | Gestión de categorías       |
-| CRUD   | `/api/admin/dificultades` | Admin   | Gestión de dificultades     |
-| CRUD   | `/api/admin/usuarios`     | Admin   | Gestión de usuarios         |
+API REST desarrollada con **Laravel 11 + Sanctum** que gestiona recetas, ingredientes, categorías, dificultades y usuarios. Expone rutas públicas de consulta y un panel de administración protegido.
 
 ---
 
-## ⚙️ Requisitos previos
+## Requisitos previos
 
-- **PHP** >= 8.2
-- **Composer**
-- **Node.js** y **npm** (para Vite y assets)
-- Una base de datos compatible (SQLite por defecto, o MySQL/PostgreSQL)
+- PHP >= 8.2
+- Composer
+- SQLite (por defecto) o MySQL/PostgreSQL
 
 ---
 
-## 🚀 Instalación y puesta en marcha (desarrollo)
-
-### 1. Instalar dependencias
+## Instalación y puesta en marcha
 
 ```bash
 composer install
-npm install
-```
-
-### 2. Configurar el entorno
-
-Copia el archivo de ejemplo y edítalo con tus valores:
-
-```bash
 cp .env.example .env
-```
-
-Variables clave en `.env`:
-
-```dotenv
-APP_NAME="Libro de Recetas"
-APP_URL=http://localhost:8000
-
-# Base de datos (SQLite por defecto, sin configuración adicional)
-DB_CONNECTION=sqlite
-
-# Si usas MySQL, descomenta y rellena:
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=recetas
-# DB_USERNAME=root
-# DB_PASSWORD=
-
-# URL del frontend (para CORS y Sanctum)
-FRONTEND_URL=http://localhost:5173
-SANCTUM_STATEFUL_DOMAINS=localhost:5173
-SESSION_DOMAIN=localhost
-```
-
-### 3. Generar la clave de la aplicación
-
-```bash
 php artisan key:generate
-```
-
-### 4. Ejecutar migraciones (y seeders, si los hay)
-
-```bash
 php artisan migrate
-# php artisan db:seed   # opcional, si existen seeders
-```
-
-### 5. Iniciar el servidor de desarrollo
-
-**Opción A — Básica (recomendada para uso habitual):**
-
-```bash
+php artisan storage:link     # enlaza storage/app/public → public/storage (imágenes)
 php artisan serve --host=localhost --port=8000
 ```
 
-> La API quedará disponible en **http://localhost:8000**
+La API queda disponible en **http://localhost:8000**.
 
-**Opción B — Avanzada (incluye cola de trabajos y logs en tiempo real):**
+### Variables de entorno clave (`.env`)
 
-```bash
-composer run dev
+| Variable                   | Descripción                                      | Ejemplo                 |
+| -------------------------- | ------------------------------------------------ | ----------------------- |
+| `APP_URL`                  | URL del propio backend                           | `http://localhost:8000` |
+| `DB_CONNECTION`            | Motor de base de datos                           | `sqlite` / `mysql`      |
+| `FRONTEND_URL`             | URL del frontend Vue (para CORS)                 | `http://localhost:3000` |
+| `SANCTUM_STATEFUL_DOMAINS` | Dominios con acceso a sesión (sin protocolo)     | `localhost:3000`        |
+| `SESSION_DOMAIN`           | Dominio de la cookie de sesión                   | `localhost`             |
+| `MAIL_*`                   | Configuración de correo (recuperación contraseña)| —                       |
+| `FILESYSTEM_DISK`          | Disco de almacenamiento de imágenes              | `public`                |
+
+> **En producción** configura `SESSION_SECURE_COOKIE=true`, `SESSION_SAME_SITE=none` (si frontend y backend están en dominios distintos) y un driver de caché real (`CACHE_DRIVER=redis` o `database`).
+
+---
+
+## Estructura del proyecto
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── MainController.php         # Rutas públicas: listado y detalle de recetas
+│   │   ├── RecetaController.php       # CRUD recetas (admin)
+│   │   ├── IngredienteController.php  # CRUD ingredientes + listado completo sin paginar
+│   │   ├── CategoriaController.php    # CRUD categorías
+│   │   ├── DificultadController.php   # CRUD dificultades (con caché permanente)
+│   │   ├── UsuarioController.php      # Gestión de usuarios (admin)
+│   │   └── Auth/                      # Breeze: login, registro, reset, verificación
+│   │
+│   ├── Middleware/
+│   │   ├── UserIsAdmin.php            # Verifica is_admin=true en el usuario autenticado
+│   │   └── EnsureEmailIsVerified.php
+│   │
+│   ├── Requests/
+│   │   ├── RecetaRequest.php          # Validación de creación/edición de receta
+│   │   ├── IngredienteRequest.php
+│   │   ├── CategoriaRequest.php
+│   │   └── UsuarioRequest.php
+│   │
+│   └── Resources/
+│       ├── RecetaCollection.php       # Colección paginada de recetas
+│       ├── CategoriaResource.php / CategoriaCollection.php
+│       ├── IngredienteResource.php / IngredienteCollection.php
+│       ├── DificultadResource.php / DificultadCollection.php
+│       └── UsuarioResource.php / UsuarioCollection.php
+│
+├── Models/
+│   ├── Receta.php              # Relaciones: ingredientes (pivot), categoria, dificultad
+│   ├── Ingrediente.php
+│   ├── RecetaIngrediente.php   # Pivot con campos extra: cantidad, unidad
+│   ├── Categoria.php
+│   ├── Dificultad.php
+│   └── User.php                # Campo extra: is_admin (bool)
+│
+└── Traits/
+    └── ImageHandler.php        # Sube, reemplaza y elimina imágenes del disco
+
+routes/
+├── api.php                     # Rutas de la API
+└── auth.php                    # Rutas de autenticación Breeze
+
+database/
+└── migrations/                 # Historial completo del esquema
 ```
 
-> Lanza en paralelo: servidor PHP, `queue:listen`, `pail` (logs) y Vite.  
-> Útil si usas trabajos en cola o quieres monitorizar logs desde consola.
+---
+
+## Esquema de base de datos
+
+```
+users
+  id, name, email, password, is_admin (bool), email_verified_at, timestamps
+
+ingredientes
+  id, nombre (unique), descripcion (nullable)
+
+dificultades
+  id, nombre
+
+categorias
+  id, nombre
+
+recetas
+  id, nombre, intro (nullable), instrucciones (text — HTML de TinyMCE),
+  imagen (nullable), comensales, tiempo, origen,
+  dificultad_id (FK → dificultades),
+  categoria_id (FK → categorias, nullable)
+
+receta_ingredientes   ← tabla pivot con datos extra
+  id, receta_id (FK → recetas, cascade delete),
+  ingrediente_id (FK → ingredientes, set null on delete),
+  cantidad, unidad
+```
+
+`ingrediente_id` usa `ON DELETE SET NULL`: borrar un ingrediente no elimina las recetas donde aparecía, solo desvincula la relación.
 
 ---
 
-## 🔗 Frontend relacionado
+## API Reference
 
-El frontend (Vue 3 + Vite) se encuentra en la carpeta `recetas-frontend`. Consulta su propio `README.md` para iniciarlo.
+### Rutas públicas
+
+| Método | Ruta                | Descripción                                                    |
+| ------ | ------------------- | -------------------------------------------------------------- |
+| GET    | `/api/recetas`      | Listado paginado. Acepta `?buscar=` para filtrar por nombre.   |
+| GET    | `/api/recetas/{id}` | Detalle con ingredientes, categoría y dificultad.              |
+
+### Rutas de autenticación
+
+Gestionadas por Laravel Breeze. Throttle `6,1` (6 intentos/minuto) en todas.
+
+| Método | Ruta                               | Middleware   | Acción                          |
+| ------ | ---------------------------------- | ------------ | ------------------------------- |
+| POST   | `/register`                        | guest        | Crear cuenta                    |
+| POST   | `/login`                           | guest        | Iniciar sesión                  |
+| POST   | `/logout`                          | auth         | Cerrar sesión                   |
+| POST   | `/forgot-password`                 | guest        | Enviar email de recuperación    |
+| POST   | `/reset-password`                  | guest        | Establecer nueva contraseña     |
+| GET    | `/verify-email/{id}/{hash}`        | auth, signed | Verificar email                 |
+| POST   | `/email/verification-notification` | auth         | Reenviar email de verificación  |
+
+### Rutas de administración (`/api/admin/...`)
+
+Protegidas por `auth:sanctum + verified + is_admin`.
+
+| Método | Ruta                            | Descripción                                                  |
+| ------ | --------------------------------| ------------------------------------------------------------ |
+| GET    | `/admin/recetas`                | Listado paginado + `?buscar=`                                |
+| POST   | `/admin/recetas`                | Crear receta (multipart/form-data con imagen opcional)       |
+| GET    | `/admin/recetas/{id}`           | Detalle                                                      |
+| POST   | `/admin/recetas/{id}`           | Actualizar (POST con `_method=PUT` — necesario por multipart)|
+| DELETE | `/admin/recetas/{id}`           | Eliminar receta e imagen del disco                           |
+| GET    | `/admin/ingredientes`           | Listado paginado + `?buscar=`                                |
+| GET    | `/admin/ingredientes-todos`     | Lista completa sin paginar (para `<select>` del formulario)  |
+| POST   | `/admin/ingredientes`           | Crear                                                        |
+| PUT    | `/admin/ingredientes/{id}`      | Actualizar                                                   |
+| DELETE | `/admin/ingredientes/{id}`      | Eliminar                                                     |
+| CRUD   | `/admin/categorias`             | Igual que ingredientes                                       |
+| CRUD   | `/admin/dificultades`           | Igual que ingredientes                                       |
+| CRUD   | `/admin/usuarios`               | Gestión de usuarios                                          |
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Autenticación — Sanctum SPA
 
-| Tecnología      | Versión                    |
-| --------------- | -------------------------- |
-| Laravel         | ^11.31                     |
-| Laravel Sanctum | ^4.0                       |
-| PHP             | ^8.2                       |
-| Laravel Breeze  | ^2.3 (scaffolding de auth) |
+Este backend usa autenticación basada en **cookies de sesión**, no en tokens Bearer. El flujo desde el frontend es:
+
+1. `GET /sanctum/csrf-cookie` — obtiene la cookie CSRF antes del primer login.
+2. `POST /login` — establece la cookie de sesión `HttpOnly`.
+3. Todas las peticiones incluyen `withCredentials: true` para enviar las cookies automáticamente.
+
+Para que funcione en desarrollo, `SANCTUM_STATEFUL_DOMAINS` y `SESSION_DOMAIN` deben coincidir con el dominio del frontend (sin protocolo ni barra final).
 
 ---
 
-## 📄 Licencia
+## Imágenes — Trait `ImageHandler`
 
-Este proyecto está bajo la licencia [MIT](https://opensource.org/licenses/MIT).
+`app/Traits/ImageHandler.php` centraliza toda la gestión de imágenes:
+
+- **Subida**: guarda el archivo en `storage/app/public/` y devuelve la ruta relativa.
+- **Reemplazo**: elimina la imagen anterior del disco antes de guardar la nueva.
+- **Eliminación**: borra el archivo cuando se elimina una receta.
+
+Requiere haber ejecutado `php artisan storage:link` para que las imágenes sean accesibles en `public/storage`.
+
+---
+
+## Caché
+
+`DificultadController` usa `Cache::rememberForever('dificultades', ...)` porque las dificultades son datos estáticos. Si modificas los registros de dificultades directamente en la BD, limpia la caché:
+
+```bash
+php artisan cache:clear
+```
+
+---
+
+## Comandos Artisan útiles
+
+```bash
+php artisan migrate:fresh          # Reinicia la BD (borra todo y vuelve a migrar)
+php artisan storage:link           # Crea el enlace simbólico para imágenes
+php artisan cache:clear            # Limpia caché (necesario si modificas dificultades)
+php artisan route:list --path=api  # Lista todas las rutas de la API
+php artisan tinker                 # Consola interactiva de Laravel
+```
+
+---
+
+## Tecnologías
+
+| Herramienta     | Versión |
+| --------------- | ------- |
+| Laravel         | ^11.31  |
+| Laravel Sanctum | ^4.0    |
+| Laravel Breeze  | ^2.3    |
+| PHP             | ^8.2    |
