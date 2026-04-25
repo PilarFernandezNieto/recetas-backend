@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MainController;
 use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DificultadController;
@@ -26,6 +25,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'verified', 'is_admin'])->gr
     Route::apiResource('/usuarios', UsuarioController::class);
 });
 
-// Rutas públicas para el MainController
-Route::get('/recetas', [MainController::class, 'index']);
-Route::get('/recetas/{receta}', [MainController::class, 'show']);
+Route::get('/recetas', [RecetaController::class, 'index']);
+Route::get('/recetas/{receta}', [RecetaController::class, 'show']);

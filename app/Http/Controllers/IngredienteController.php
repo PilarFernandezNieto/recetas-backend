@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Ingrediente;
 use App\Traits\ImageHandler;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\IngredienteRequest;
 use App\Http\Resources\IngredienteCollection;
 
@@ -35,8 +34,8 @@ class IngredienteController extends Controller
         $datos = $request->validated();
 
         if ($request->hasFile('imagen')) {
-            $imagen = $request->imagen->store('img', "public");
-            $datos['imagen'] = Storage::url($imagen);
+            $imagen = $this->guardarImagen($request->imagen);
+            $datos['imagen'] = $this->convertToWebp($imagen);
         } else {
             $datos['imagen'] = null;
         }
@@ -71,8 +70,8 @@ class IngredienteController extends Controller
 
         if ($request->hasFile('imagen')) {
             $this->borraImagen($ingrediente->imagen);
-            $imagen = $request->imagen->store('img', "public");
-            $datos['imagen'] = Storage::url($imagen);
+            $imagen = $this->guardarImagen($request->imagen);
+            $datos['imagen'] = $this->convertToWebp($imagen);
         } else {
             $datos['imagen'] = $ingrediente->imagen;
         }

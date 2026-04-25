@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Models\RecetaIngrediente;
 use App\Http\Requests\RecetaRequest;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\RecetaCollection;
 
 class RecetaController extends Controller
@@ -49,8 +48,8 @@ class RecetaController extends Controller
         $receta = new Receta();
 
         if ($request->hasFile('imagen')) {
-            $imagen = $request->imagen->store('img', "public");
-            $datos['imagen'] = Storage::url($imagen);
+            $imagen = $this->guardarImagen($request->imagen);
+            $datos['imagen'] = $this->convertToWebp($imagen);
         } else {
             $datos['imagen'] = null;
         }
@@ -116,8 +115,8 @@ class RecetaController extends Controller
 
         if ($request->hasFile('imagen')) {
             $this->borraImagen($receta->imagen);
-            $imagen = $request->imagen->store('img', "public");
-            $datos['imagen'] = Storage::url($imagen);
+            $imagen = $this->guardarImagen($request->imagen);
+            $datos['imagen'] = $this->convertToWebp($imagen);
         } else {
             $datos['imagen'] = $receta->imagen;
         }

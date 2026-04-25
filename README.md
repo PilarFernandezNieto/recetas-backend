@@ -47,8 +47,7 @@ La API queda disponible en **http://localhost:8000**.
 app/
 ├── Http/
 │   ├── Controllers/
-│   │   ├── MainController.php         # Rutas públicas: listado y detalle de recetas
-│   │   ├── RecetaController.php       # CRUD recetas (admin)
+│   │   ├── RecetaController.php       # CRUD recetas (admin) + rutas públicas de lectura
 │   │   ├── IngredienteController.php  # CRUD ingredientes + listado completo sin paginar
 │   │   ├── CategoriaController.php    # CRUD categorías
 │   │   ├── DificultadController.php   # CRUD dificultades (con caché permanente)
@@ -81,7 +80,7 @@ app/
 │   └── User.php                # Campo extra: is_admin (bool)
 │
 └── Traits/
-    └── ImageHandler.php        # Sube, reemplaza y elimina imágenes del disco
+    └── ImageHandler.php        # Sube (nombre sanitizado), convierte a WebP, reemplaza y elimina imágenes
 
 routes/
 ├── api.php                     # Rutas de la API
@@ -185,9 +184,11 @@ Para que funcione en desarrollo, `SANCTUM_STATEFUL_DOMAINS` y `SESSION_DOMAIN` d
 
 `app/Traits/ImageHandler.php` centraliza toda la gestión de imágenes:
 
-- **Subida**: guarda el archivo en `storage/app/public/` y devuelve la ruta relativa.
-- **Reemplazo**: elimina la imagen anterior del disco antes de guardar la nueva.
-- **Eliminación**: borra el archivo cuando se elimina una receta.
+- **`guardarImagen($file)`**: sube el archivo usando el nombre original del explorador. Lo sanitiza: transliteración de acentos (`iconv`), minúsculas, elimina caracteres especiales y añade un sufijo único de 6 caracteres para evitar colisiones (`foto-tomate-a1b2c3.jpg`).
+- **`convertToWebp($path)`**: convierte la imagen subida a WebP con calidad 80 (usando `intervention/image` v3 + GD) y elimina el archivo original. Devuelve la URL pública del `.webp`.
+- **`borraImagen($url)`**: elimina el archivo del disco dado su URL o ruta relativa, independientemente del formato.
+
+El pipeline en cada controller es: `guardarImagen()` → `convertToWebp()`. Al actualizar, `borraImagen()` se llama antes de subir la nueva.
 
 Requiere haber ejecutado `php artisan storage:link` para que las imágenes sean accesibles en `public/storage`.
 
